@@ -10,24 +10,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+
       - name: Install dependencies
         run: composer install --prefer-dist --no-p
+
       - name: Write private key
+        env:
+          OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
         run: |
-          echo "${{ secrets.OCI_PRIVATE_KEY }}" >
+          echo "$OCI_PRIVATE_KEY" > /tmp/oci_key.pem
           chmod 600 /tmp/oci_key.pem
+
       - name: Run
         run: php index.php
         env:
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
-          OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_
-          OCI_KEY_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
-          OCI_PRIVATE_KEY_FILENAME: /tmp/oci_key.p
+          OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
+          OCI_KEY_FINGERPRINT: ${{ secrets.OCI_FIN
+          OCI_PRIVATE_KEY_FILENAME: /tmp/oci_key.pem
           OCI_SUBNET_ID: ${{ secrets.OCI_SUBNET_ID }}
           OCI_IMAGE_ID: ${{ secrets.OCI_IMAGE_ID }
           OCI_OCPUS: 4
